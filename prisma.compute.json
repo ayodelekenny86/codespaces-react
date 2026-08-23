@@ -1,0 +1,13 @@
+{
+  "region": "eu-central-1",
+  "app": {
+    "name": "codespaces-react",
+    "framework": "bun",
+    "entry": "index.js",
+    "httpPort": 3000,
+    "build": {
+      "command": "npm run build",
+      "outputDirectory": "."
+    }
+  }
+}
