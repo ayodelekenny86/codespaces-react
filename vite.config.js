@@ -6,7 +6,12 @@ export default defineConfig({
   plugins: [react()],
   test: {
     globals: true,
-    environment: 'jsdom',
-    setupFiles: ['./src/setupTests.js'],
+    environment: "jsdom",
+    setupFiles: ["./src/setupTests.js"],
   },
-})
+  build: {
+    rolldownOptions: {
+      external: ["axios"]
+    }
+  }
+});

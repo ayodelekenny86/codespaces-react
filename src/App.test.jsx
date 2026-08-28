@@ -10,13 +10,11 @@ async function verifyBuyer(user) {
   await user.click(screen.getByRole('button', { name: /verify otp/i }));
 }
 
-test('renders the buyer booking workspace', () => {
+test('renders the buyer booking workspace', async () => {
   const user = userEvent.setup();
   render(<App />);
-  return verifyBuyer(user);
-}).then(() => {
-  render(<App />);
-});
+  await verifyBuyer(user);
+  
   expect(screen.getByRole('heading', { name: /good morning, alex/i })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: /where should we deliver/i })).toBeInTheDocument();
   expect(screen.getByText(/GH₵300 · GH₵250/)).toBeInTheDocument();
@@ -38,7 +36,7 @@ test('creates a delivery booking and switches workspaces', async () => {
   const user = userEvent.setup();
   render(<App />);
 
-  await user.type(screen.getByPlaceholderText(/enter an address/i), 'Labone, Accra');
+  await user.type(screen.getByPlaceholderText(/enter an address or landmark/i), 'Labone, Accra');
   await user.click(screen.getByRole('button', { name: /confirm booking/i }));
 
   expect(screen.getByRole('status')).toHaveTextContent(/booking confirmed/i);
@@ -57,7 +55,7 @@ test('lets a seller submit onboarding details', async () => {
   await user.click(screen.getByRole('button', { name: /seller app manage your fleet/i }));
   await user.type(screen.getByRole('textbox', { name: /business name/i }), 'AquaFlow Tankers');
   await user.type(screen.getByRole('textbox', { name: /seller phone/i }), '0244000000');
-  await user.click(screen.getByRole('button', { name: /submit for review/i }));
+  await user.click(screen.getByRole('button', { name: /submit signup for review/i }));
 
   expect(screen.getByRole('status')).toHaveTextContent(/submitted/i);
 });

@@ -11,7 +11,7 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// Request interceptor to add auth token
+// Request interceptor for adding auth token
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('authToken');
@@ -36,44 +36,54 @@ api.interceptors.response.use(
   }
 );
 
+// Health check
+export const checkHealth = () => api.get('/health');
+
 // User APIs
-export const usersAPI = {
-  getAll: (role) => api.get('/users', { params: { role } }),
+export const userAPI = {
+  getAll: () => api.get('/users'),
   getById: (id) => api.get(`/users/${id}`),
   create: (userData) => api.post('/users', userData),
-  login: (credentials) => api.post('/users/login', credentials),
   update: (id, userData) => api.put(`/users/${id}`, userData),
   delete: (id) => api.delete(`/users/${id}`),
+  login: (credentials) => api.post('/auth/login', credentials),
+  register: (userData) => api.post('/auth/register', userData),
 };
 
 // Product APIs
-export const productsAPI = {
-  getAll: (params) => api.get('/products', { params }),
+export const productAPI = {
+  getAll: () => api.get('/products'),
   getById: (id) => api.get(`/products/${id}`),
   create: (productData) => api.post('/products', productData),
   update: (id, productData) => api.put(`/products/${id}`, productData),
   delete: (id) => api.delete(`/products/${id}`),
+  search: (query) => api.get('/products/search', { params: { q: query } }),
 };
 
 // Order APIs
-export const ordersAPI = {
-  getAll: (params) => api.get('/orders', { params }),
+export const orderAPI = {
+  getAll: () => api.get('/orders'),
   getById: (id) => api.get(`/orders/${id}`),
   create: (orderData) => api.post('/orders', orderData),
   update: (id, orderData) => api.put(`/orders/${id}`, orderData),
-  cancel: (id) => api.delete(`/orders/${id}`),
+  delete: (id) => api.delete(`/orders/${id}`),
+  getByUser: (userId) => api.get('/orders/user', { params: { userId } }),
+};
+
+// Institution APIs
+export const institutionAPI = {
+  getAll: () => api.get('/institutions'),
+  getById: (id) => api.get(`/institutions/${id}`),
+  create: (institutionData) => api.post('/institutions', institutionData),
+  update: (id, institutionData) => api.put(`/institutions/${id}`, institutionData),
+  delete: (id) => api.delete(`/institutions/${id}`),
 };
 
 // Payment APIs
-export const paymentsAPI = {
-  initiate: (paymentData) => api.post('/payments/initiate', paymentData),
-  confirm: (id) => api.post(`/payments/${id}/confirm`),
-  refund: (id) => api.post(`/payments/${id}/refund`),
-  getAll: (params) => api.get('/payments', { params }),
+export const paymentAPI = {
+  process: (paymentData) => api.post('/payments/process', paymentData),
   getById: (id) => api.get(`/payments/${id}`),
+  getByOrder: (orderId) => api.get('/payments/order', { params: { orderId } }),
 };
-
-// Health check
-export const checkHealth = () => api.get('/health');
 
 export default api;

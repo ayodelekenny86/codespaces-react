@@ -1,5 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
+import SmartAnalyticsDashboard from './components/SmartAnalytics';
+import LiveTrackingMap from './components/LiveTracking';
+import AdvancedAIAssistant from './components/AdvancedAI';
+import { checkHealth, productAPI, orderAPI, userAPI } from './services/api';
 
 const roles = [
   ['buyer', 'Buyer app', 'Book reliable water'],
@@ -57,7 +61,25 @@ function App() {
   const [region, setRegion] = useState('Accra');
   const [savedAddresses, setSavedAddresses] = useState(['Home · East Legon, Accra', 'Office · Cantonments, Accra']);
   const [driverUpdate, setDriverUpdate] = useState('Driver Kojo · assigned seller · ETA 18 min');
+  const [backendConnected, setBackendConnected] = useState(false);
+  const [products, setProducts] = useState([]);
   const t = translations[language];
+
+  // Check backend health on mount
+  useEffect(() => {
+    checkHealth()
+      .then(() => setBackendConnected(true))
+      .catch(() => setBackendConnected(false));
+  }, []);
+
+  // Load products from backend
+  useEffect(() => {
+    if (backendConnected) {
+      productAPI.getAll()
+        .then(response => setProducts(response.data))
+        .catch(err => console.error('Failed to load products:', err));
+    }
+  }, [backendConnected]);
 
   function updateBooking(event) {
     setBooking({ ...booking, [event.target.name]: event.target.value });
@@ -152,6 +174,12 @@ function App() {
 
   return (
     <div className="app-shell">
+      {/* Backend Status Indicator */}
+      <div className={`backend-status ${backendConnected ? 'connected' : 'disconnected'}`} title={backendConnected ? 'Backend connected' : 'Running in demo mode'}>
+        <span className="status-dot">{backendConnected ? '●' : '○'}</span>
+        <span className="status-text">{backendConnected ? 'Backend Connected' : 'Demo Mode'}</span>
+      </div>
+
       <aside className="sidebar">
         <a className="app-logo" href="#main" aria-label="AquaLink dashboard"><span>A</span>Aqua<strong>Link</strong></a>
         <div className="workspace-label">WORKSPACE</div>
@@ -178,9 +206,12 @@ function App() {
         {role === 'institution' && <InstitutionFinance showNotice={showNotice} />}
         {role === 'institution' && <InstitutionAgentCard showNotice={showNotice} />}
         {role === 'ops' && (adminAuthenticated ? <OpsView downloadReport={downloadReport} /> : <AdminAccessGate credentials={adminCredentials} setCredentials={setAdminCredentials} loginAdmin={loginAdmin} />)}
+        {role === 'ops' && adminAuthenticated && <SmartAnalyticsDashboard showNotice={showNotice} />}
+        {role === 'ops' && adminAuthenticated && <LiveTrackingMap showNotice={showNotice} />}
         {role === 'ops' && adminAuthenticated && <ReportActions downloadReport={downloadReport} />}
         {role === 'ops' && adminAuthenticated && <OperationalRiskPanel />}
         {role === 'ops' && adminAuthenticated && <RevenueFinance showNotice={showNotice} />}
+        <AdvancedAIAssistant role={role} showNotice={showNotice} />
         </main>
     </div>
   );
