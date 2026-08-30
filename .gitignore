@@ -2,65 +2,18 @@
 # Dependencies
 node_modules/
 
+# Logs and temp files
+*.log
+*.tmp
+
 # Environment
 .env
 .env.local
-.env.*
+.env.
 
-# Build artifacts
-dist/
-build/
-target/
-
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-env/
-venv/
-.venv/
-.venv.bak/
-pip-log.txt
-pip-delete-this-directory.txt
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.log
-*.tmp
-*.swp
-*.swo
-.DS_Store
-Thumbs.db
-
-# IDE
+# Editors
 .vscode/
-.idea/
-*.swp
-*.swo
 
-# Logs
+# Original rules preserved
 *.log
-
-# Testing
-coverage/
-htmlcov/
-.coverage
-.pytest_cache/
-.mypy_cache/
-
-# Distribution / packaging
-.Python
-env/
-venv/
-.venv/
-.venv.bak/
-pip-log.txt
-pip-delete-this-directory.txt
-.tox/
 ```
