@@ -12,7 +12,7 @@ node_modules/
 .env.local
 *.env.*
 
-# Logs
+# Original rules preserved
 *.log
 
 # Editor files
