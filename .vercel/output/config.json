@@ -1,0 +1,21 @@
+{
+  "version": 3,
+  "routes": [
+    {
+      "src": "^/assets/(.*)$",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      },
+      "dest": "/dist/assets/$1"
+    },
+    {
+      "src": "^/(.*)$",
+      "dest": "/dist/index.html"
+    }
+  ],
+  "framework": {
+    "slug": "vite",
+    "version": "8.0.16"
+  },
+  "crons": []
+}
