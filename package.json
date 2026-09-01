@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@dataconnect/generated": "link:src/dataconnect-generated",
+    "@supabase/ssr": "^0.12.5",
+    "@supabase/supabase-js": "^2.112.4",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
@@ -43,6 +46,7 @@
   "devDependencies": {
     "@vitejs/plugin-react": "^6.0.1",
     "jsdom": "^26.1.0",
+    "prisma": "^7.9.1",
     "vite": "^8.0.16",
     "vitest": "^4.1.6"
   }
