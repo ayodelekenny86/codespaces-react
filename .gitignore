@@ -1,63 +1,54 @@
-```
-# Build outputs
-build/
-dist/
-.vercel/
+# Examples
 
-# Dependencies
-node_modules/
+    Input:
+    ### Added files:
+    [src/main.py, README.md, config.json]
 
-# Environment variables
-.env
-.env.local
-*.env.*
+    ### Deleted files:
+    [old/unused.py]
+    ### Modified files:
+    [utils.py]
+    ###current .gitignore Content
+    (empty)
+    Expected Output:
+    (empty — output nothing)
 
-# Original rules preserved
+# Example 2 (Project with artifacts):
+Input:
+### Added files:
+[pycache/main.cpython-310.pyc, dist/app.js, .env.local, .vscode/settings.json]
+
+### Deleted files:
+    []
+
+### Modified files:
+[]
+### current .gitignore Content
 *.log
+Expected Output:
+    #Compiled and build artifacts
+    *.pyc
+    pycache/
+    *.o
+    *.obj
+    dist/
+    build/
+    #Dependencies
+    .venv/
+    venv/
+    node_modules/
+    #Logs and temp files
+    *.log
+    *.tmp
+    *.swp
+    #Environment
+    .env
+    .env.local
+    .env.
+    #Editors
+    .vscode/
+    .idea/
+    #Original rules preserved
+    *.log
 
-# Editor files
-.vscode/
-.idea/
-*.swp
-*.swo
-*.tmp
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Coverage reports
-coverage/
-htmlcov/
-.coverage
-
-# Python cache
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Compiled files
-*.o
-*.obj
-*.exe
-*.dll
-*.so
-*.a
-*.out
-
-# Testing
-.mypy_cache/
-.pytest_cache/
-.nyc_output/
-istanbul_out/
-
-# Distribution / packaging
-*.tar.gz
-*.whl
-*.egg
-*.egg-info/
-
-# Vercel specific
-.vercel/output/
-```
+Final reminder: Output ONLY the .gitignore content. If nothing should be ignored, output NOTHING.

@@ -66,9 +66,10 @@ app.use((req, res) => {
 });
 
 const PORT = process.env.PORT || 4000;
+const HOST = '0.0.0.0';
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
+app.listen(PORT, HOST, () => {
+  console.log(`🚀 Server running on http://${HOST}:${PORT} in ${process.env.NODE_ENV} mode`);
   console.log(`📍 API available at http://localhost:${PORT}/api`);
 });
 
