@@ -8,8 +8,17 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
     "@vercel/speed-insights": "^2.0.0",
+    "axios": "^1.20.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "framer-motion": "^13.1.1",
+    "leaflet": "^1.9.4",
+    "lucide-react": "^1.35.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-leaflet": "^4.2.1",
+    "recharts": "^3.10.1",
     "web-vitals": "^3.1.0"
   },
   "overrides": {
@@ -20,7 +29,9 @@
     "start": "BROWSER=none WDS_SOCKET_PORT=0 vite --port 3000",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "server": "nodemon server/index.js",
+    "dev": "concurrently \"npm run server\" \"npm run start\""
   },
   "eslintConfig": {
     "extends": [
@@ -42,7 +53,9 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^6.0.1",
+    "concurrently": "^9.2.4",
     "jsdom": "^26.1.0",
+    "nodemon": "^3.1.14",
     "vite": "^8.0.16",
     "vitest": "^4.1.6"
   }
