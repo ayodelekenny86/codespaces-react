@@ -56,7 +56,15 @@ button { cursor: pointer; }
 @media (max-width: 900px) { .finance-grid, .ops-finance { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 600px) { .finance-heading { align-items: flex-start; flex-direction: column; }.finance-grid, .ops-finance { grid-template-columns: 1fr; }.finance-heading .outline-button { width: 100%; } }
 .access-gate { max-width: 620px; margin: 95px auto; padding: 38px; }.access-lock { display: grid; width: 42px; height: 42px; place-items: center; color: #fff; background: var(--teal); border-radius: 50%; font-size: 20px; }.access-gate h1 { margin: 10px 0; font-size: 30px; letter-spacing: -.05em; }.access-gate > p:not(.eyebrow) { max-width: 480px; color: var(--muted); font-size: 11px; line-height: 1.6; }.access-gate form { display: grid; gap: 10px; max-width: 380px; margin-top: 24px; }.access-gate input { padding: 12px; border: 1px solid #cddbd8; border-radius: 4px; font-size: 11px; }.access-gate form button { width: 100%; }.access-gate > small { display: block; max-width: 500px; margin-top: 17px; color: #849397; font-size: 9px; line-height: 1.5; }.admin-gate { border-color: #e3cad0; }.report-actions { display: flex; gap: 12px; align-items: center; margin: 20px 0; padding: 16px 18px; background: #edf6f1; border: 1px solid #c9e0d4; border-radius: 5px; }.report-actions > span { display: grid; gap: 5px; flex: 1; }.report-actions strong { font-size: 12px; }.report-actions small { color: var(--muted); font-size: 9px; }.report-actions button { white-space: nowrap; }
-@media (max-width: 600px) { .access-gate { margin: 40px auto; padding: 25px; }.report-actions { align-items: stretch; flex-direction: column; }.report-actions button { width: 100%; } }
+@media (max-width: 600px) {
+  /* The gate is a block inside .main-content, so it must be told to fill the
+     available width rather than shrink to its min-content and overflow. */
+  .access-gate { width: 100%; max-width: none; margin: 30px auto; padding: 22px; }
+  .access-gate form { max-width: none; }
+  .access-gate input, .access-gate form select { width: 100%; min-width: 0; }
+  .report-actions { align-items: stretch; flex-direction: column; }
+  .report-actions button { width: 100%; }
+} }
 .seller-gate { border-color: #e1d6c1; }.pending-approval { display: grid; gap: 10px; max-width: 380px; margin-top: 20px; padding: 15px; background: #fff8eb; border: 1px solid #f0dfb9; border-radius: 4px; }.pending-approval strong { font-size: 12px; }.pending-approval small { color: var(--muted); font-size: 9px; line-height: 1.5; }.pending-approval button { width: 100%; }.access-gate form select { padding: 12px; border: 1px solid #cddbd8; border-radius: 4px; font-size: 11px; }
 .live-agent-card { display: grid; gap: 8px; margin-top: 20px; padding: 17px; background: linear-gradient(135deg, #f2ecfa, #fff); border-color: #dacbe6; }.live-agent-head { display: flex; justify-content: space-between; }.agent-online { color: #287660; font-size: 8px; }.live-agent-card > strong { color: #4e3c60; font-size: 12px; }.live-agent-card p { margin: 0; color: #786b80; font-size: 9px; line-height: 1.55; }.live-agent-actions { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 4px; }.live-agent-actions button { padding: 7px 9px; color: #704b8d; background: #fff; border: 1px solid #d7c5e5; border-radius: 3px; font-size: 9px; font-weight: 700; }.institution-agent { max-width: 100%; margin-top: 20px; }
 
@@ -105,16 +113,64 @@ button { cursor: pointer; }
   .confirm-button { padding: 7px 9px; }
   .cart { margin: 18px 0; }
   .marketplace { padding: 18px 0; }
+
+  /* Stack the shell instead of shrinking two flex siblings against each other.
+     As a row, the 204px sidebar leaves .main-content too narrow and any card
+     with a min-content floor overflows the page. */
+  .app-shell { display: block; }
+  .main-content { width: 100%; }
+
+  /* Fixed-width form rows and inputs are the other source of sideways scroll. */
+  .auth-form { flex-wrap: wrap; }
+  .auth-form input { min-width: 0; flex: 1 1 140px; width: auto; }
+  .input-wrap { min-width: 0; }
+  .booking-panel { padding: 18px; }
+  .support-actions { min-width: 0; }
+
+  /* The four role icons must be able to shrink below their content width,
+     otherwise they force the whole page to scroll sideways. */
+  .role-list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .role-button { min-width: 0; overflow: hidden; }
+
+  /* Keep the topbar inside the viewport. Everything in it must be allowed to
+     shrink, and the badge needs explicit room because it is positioned. */
+  .topbar { gap: 6px; }
+  .breadcrumb { flex: 0 1 auto; min-width: 0; overflow: hidden; }
+  .breadcrumb strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .topbar-actions { flex: 0 1 auto; gap: 5px; min-width: 0; }
+  .language-picker { min-width: 0; }
+  .language-picker select {
+    width: 58px;
+    min-width: 0;
+    padding: 7px 0;
+    /* Drop the native arrow so the language code has room to show. */
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .breadcrumb select { min-width: 0; max-width: 78px; }
+  .icon-button { margin-right: 8px; padding: 2px; }
 }
 
 @media (max-width: 420px) {
   .sidebar { padding: 14px 10px; }
   .app-logo { margin-bottom: 16px; }
   .role-list { display: flex; gap: 4px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 2px; }
-  .role-button { flex: 1 0 auto; min-width: 44px; }
+  .role-button { flex: 1 0 44px; min-width: 44px; }
   .role-icon { width: 26px; height: 26px; font-size: 14px; }
   .page-header h1 { font-size: 26px; }
-  .ai-trigger { display: none; }
+  /* At this width the topbar cannot hold the language picker and still keep
+     the profile avatar on screen, so drop the secondary controls. */
+  .ai-trigger, .language-picker { display: none; }
+  .breadcrumb { gap: 6px; font-size: 10px; }
+  .breadcrumb > span, .breadcrumb > i { display: none; }
+  .main-content { padding-left: 14px; padding-right: 14px; }
+  .sidebar { padding: 14px 8px; }
+  /* Nothing left to trim, so let the notification badge sit inside the icon. */
+  .icon-button em { top: -2px; right: -4px; }
+  .icon-button { margin-right: 4px; }
+  /* The avatar has no menu behind it and the sidebar is hidden at this width,
+     so it is safe to drop rather than let it push the page sideways. */
+  .mobile-profile { display: none; }
   .quote { align-items: flex-start; flex-direction: column; gap: 10px; }
   .quote-note { text-align: left; }
 }

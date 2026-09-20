@@ -10,13 +10,12 @@ async function verifyBuyer(user) {
   await user.click(screen.getByRole('button', { name: /verify otp/i }));
 }
 
-test('renders the buyer booking workspace', () => {
+test('renders the buyer booking workspace', async () => {
   const user = userEvent.setup();
   render(<App />);
-  return verifyBuyer(user);
-}).then(() => {
-  render(<App />);
-});
+
+  await verifyBuyer(user);
+
   expect(screen.getByRole('heading', { name: /good morning, alex/i })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: /where should we deliver/i })).toBeInTheDocument();
   expect(screen.getByText(/GH₵300 · GH₵250/)).toBeInTheDocument();
