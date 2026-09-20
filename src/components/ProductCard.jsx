@@ -1,3 +1,13 @@
+/**
+ * @typedef {object} Product
+ * @property {string|number} id
+ * @property {string} name
+ * @property {number} price
+ */
+
+/**
+ * @param {{ product: Product, onAdd: (product: Product) => void }} props
+ */
 function ProductCard({ product, onAdd }) {
   return (
     <article className="product-card">

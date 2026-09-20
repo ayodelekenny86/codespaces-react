@@ -6,6 +6,9 @@ const products = [
   { id: 3, name: 'Water Purification Kit', price: 50 },
 ];
 
+/**
+ * @param {{ onAdd: (product: { id: string|number, name: string, price: number }) => void }} props
+ */
 function Marketplace({ onAdd }) {
   return (
     <main className="marketplace">

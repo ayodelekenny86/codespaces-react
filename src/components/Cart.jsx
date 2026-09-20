@@ -1,3 +1,12 @@
+/**
+ * @typedef {object} CartItem
+ * @property {string|number} id
+ * @property {string} name
+ */
+
+/**
+ * @param {{ items: CartItem[], onRemove: (id: string|number) => void }} props
+ */
 function Cart({ items, onRemove }) {
   return (
     <aside className="cart" aria-labelledby="cart-title">

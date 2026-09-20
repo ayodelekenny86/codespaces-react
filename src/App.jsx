@@ -1,34 +1,16 @@
 import { useState } from 'react';
 import './App.css';
+import { languages, translations } from './data/translations';
+import useAuth from './hooks/useAuth';
+import useBooking from './hooks/useBooking';
+import useAquaAi, { aiQuickActions } from './hooks/useAquaAi';
+import useReports from './hooks/useReports';
 
 const roles = [
   ['buyer', 'Buyer app', 'Book reliable water'],
   ['seller', 'Seller app', 'Manage your fleet'],
   ['institution', 'Institution', 'Plan your supply'],
   ['ops', 'Admin', 'Authorized operations access'],
-];
-
-const languages = [
-  ['en', 'English'],
-  ['tw', 'Twi'],
-  ['ha', 'Hausa'],
-  ['ee', 'Ewe'],
-  ['gaa', 'Ga'],
-  ['fr', 'Français'],
-];
-
-const translations = {
-  en: { buyer: 'Buyer app', seller: 'Seller app', institution: 'Institution', ops: 'Admin', book: 'Confirm booking', location: 'Where should we deliver?', recent: 'Recent deliveries', support: 'Need an agent?' },
-  tw: { buyer: 'Adetɔ app', seller: 'Ogufo app', institution: 'Ahyehyɛde', ops: 'Dwumadie console', book: 'Si booking no so', location: 'Ɛhe na yɛmfa nsuo nkɔ?', recent: 'Nsu a wɔde aba nnansa yi', support: 'Wo pɛ ɔboafoɔ?' },
-  ha: { buyer: 'Manhajar mai siya', seller: 'Manhajar mai sayarwa', institution: 'Cibiyar aiki', ops: 'Ofishin aiki', book: 'Tabbatar da oda', location: 'Ina za mu kai ruwa?', recent: 'Isarwa na baya-bayan nan', support: 'Kana bukatar wakili?' },
-  ee: { buyer: 'Asiɖa ƒe app', seller: 'Aƒetɔ ƒe app', institution: 'Dɔwɔƒe', ops: 'Dɔdzikpɔla', book: 'Ɖoɖo ƒe ŋutɔŋutɔ', location: 'Afikae míatsɔ tsi ayi?', recent: 'Nusiwo mítsɔ va fifia', support: 'Èhiã ame aɖe ƒe kpekpeɖeŋu?' },
-  gaa: { buyer: 'Shishi app', seller: 'Okai app', institution: 'Shishi klɛ', ops: 'Ops klɛ', book: 'Confirm booking', location: 'Nɔɔ ni yɛkɛ nɔɔ?', recent: 'Nɔɔ nɔɔ nɔɔ', support: 'Ohiɛ agent?' },
-  fr: { buyer: 'Application acheteur', seller: 'Application vendeur', institution: 'Institution', ops: 'Console opérations', book: 'Confirmer la réservation', location: 'Où devons-nous livrer ?', recent: 'Livraisons récentes', support: 'Besoin d’un agent ?' },
-};
-
-const initialOrders = [
-  { id: 'AQ-1048', location: 'East Legon, Accra', volume: '2,000 gal', status: 'Delivered', payment: 'Released', date: 'Today, 09:42', price: 'GH₵250' },
-  { id: 'AQ-1032', location: 'Cantonments, Accra', volume: '1,000 gal', status: 'Delivered', payment: 'Released', date: 'Jun 18, 14:20', price: 'GH₵250' },
 ];
 
 const finance = {
@@ -38,117 +20,31 @@ const finance = {
 };
 
 function App() {
-  const [role, setRole] = useState('buyer');
-  const [orders, setOrders] = useState(initialOrders);
-  const [booking, setBooking] = useState({ location: '', volume: '2,000 gallons', window: 'As soon as possible', payment: 'Mobile money' });
-  const [notice, setNotice] = useState('');
-  const [buyerAuthenticated, setBuyerAuthenticated] = useState(false);
-  const [adminAuthenticated, setAdminAuthenticated] = useState(false);
-  const [adminCredentials, setAdminCredentials] = useState({ username: '', password: '' });
-  const [available, setAvailable] = useState(true);
-  const [authStep, setAuthStep] = useState('verified');
-  const [email, setEmail] = useState('alex@example.com');
-  const [sellerProfile, setSellerProfile] = useState({ business: '', phone: '', vehicle: '', capacity: '2,000 gallons', document: 'ID document not uploaded' });
-  const [sellerApproved, setSellerApproved] = useState(false);
-  const [aiOpen, setAiOpen] = useState(false);
-  const [aiInput, setAiInput] = useState('');
-  const [aiMessages, setAiMessages] = useState([{ from: 'ai', text: 'Hi Alex. I can help compare delivery options, explain an order, or flag an ops risk.' }]);
   const [language, setLanguage] = useState('en');
   const [region, setRegion] = useState('Accra');
-  const [savedAddresses, setSavedAddresses] = useState(['Home · East Legon, Accra', 'Office · Cantonments, Accra']);
-  const [driverUpdate, setDriverUpdate] = useState('Driver Kojo · assigned seller · ETA 18 min');
-  const t = translations[language];
+  const t = translations[language] ?? translations.en;
 
-  function updateBooking(event) {
-    setBooking({ ...booking, [event.target.name]: event.target.value });
-  }
+  const {
+    role, selectRole, notice, showNotice, dismissNotice,
+    buyerAuthenticated, setBuyerAuthenticated,
+    adminAuthenticated, adminCredentials, setAdminCredentials, loginAdmin,
+    authStep, email, setEmail, sendOtp, verifyOtp,
+    sellerProfile, setSellerProfile, sellerApproved, setSellerApproved,
+    available, setAvailable,
+  } = useAuth();
 
-  function requestDelivery(event) {
-    event.preventDefault();
-    if (!booking.location.trim()) {
-      setNotice('Add a delivery location to continue.');
-      return;
-    }
-    setBooking({ ...booking, location: '' });
-    setOrders([{ id: 'AQ-1051', location: booking.location, volume: booking.volume.replace(' gallons', ' gal'), status: 'Confirmed', payment: 'Held in escrow', date: 'Just now', price: 'GH₵250' }, ...orders]);
-    setNotice('Booking confirmed at the discounted GH₵250 buyer price. Hubtel payment is held in escrow until delivery.');
-  }
+  const {
+    orders, booking, updateBooking, requestDelivery, repeatBooking,
+    savedAddresses, setSavedAddresses, driverUpdate, refreshDriverUpdate,
+    updateOrderStatus, confirmDelivery, requestRefund,
+  } = useBooking({ email, onNotice: showNotice });
 
-  function repeatBooking(address) {
-    setBooking({ ...booking, location: address.replace(/^.* · /, '') });
-    setNotice('Saved address loaded. Review the volume and confirm when ready.');
-  }
+  const { aiOpen, toggleAi, closeAi, aiInput, setAiInput, aiMessages, askAi } = useAquaAi({
+    language,
+    requestRefund,
+  });
 
-  function refreshDriverUpdate() {
-    setDriverUpdate('Driver Kojo · En Route from East Legon · ETA 12 min');
-    setNotice('Live delivery update received from the seller app.');
-  }
-
-  function updateOrderStatus(orderId, status) {
-    setOrders((items) => items.map((item) => item.id === orderId ? { ...item, status } : item));
-    setNotice(`Order ${orderId} is now ${status.toLowerCase()}.`);
-  }
-
-  function confirmDelivery(orderId) {
-    setOrders((items) => items.map((item) => item.id === orderId ? { ...item, payment: 'Released' } : item));
-    setNotice('Delivery confirmed. Escrow funds released to the seller.');
-  }
-
-  function requestRefund(orderId) {
-    setNotice(`Refund request opened for ${orderId}. Ops will review it and email ${email} with the decision.`);
-  }
-
-  function sendOtp() {
-    setAuthStep('otp');
-    setNotice(`A verification code was sent to ${email}.`);
-  }
-
-  function verifyOtp() {
-    setAuthStep('verified');
-    setNotice('Email verified. Your account is ready to book.');
-  }
-
-  function showNotice(message) {
-    setNotice(message);
-  }
-
-  function askAi(event) {
-    event.preventDefault();
-    const question = aiInput.trim();
-    if (!question) return;
-    const lowerQuestion = question.toLowerCase();
-    let answer = 'I can help with bookings, delivery status, pricing, rewards, seller performance, or operations. What should we look at?';
-    if (lowerQuestion.includes('price') || lowerQuestion.includes('cost')) answer = 'The standard water price is GH₵300, with a buyer discount to GH₵250. The 15% buyer commission is GH₵37.50 and Hubtel payment is held in escrow.';
-    if (lowerQuestion.includes('status') || lowerQuestion.includes('order')) answer = 'Your newest order is confirmed. A seller can move it to En Route, then Delivered. You release payment only after confirming receipt.';
-    if (lowerQuestion.includes('dispatch') || lowerQuestion.includes('seller')) answer = 'Priority recommendation: assign AQ-1051 to the nearest verified seller with a 4.8+ rating and a 96%+ completion rate. This minimizes late-delivery risk.';
-    if (lowerQuestion.includes('forecast') || lowerQuestion.includes('demand')) answer = 'Tomorrow’s demand signal is strongest in East Legon and Osu between 07:00–10:00. Pre-position 6 available trucks and keep 2 as reserve capacity.';
-    if (lowerQuestion.includes('receipt')) answer = 'Your receipt is available in Recent deliveries. Choose Receipt on a completed order to download or email the Hubtel payment record.';
-    if (lowerQuestion.includes('driver') || lowerQuestion.includes('position') || lowerQuestion.includes('eta')) answer = 'For an En Route order, choose Driver position in Recent deliveries. The seller app shares the latest ETA; AquaLink does not expose an unverified live map.';
-    if (lowerQuestion.includes('refund')) { answer = 'I can open a refund request for AQ-1048. Ops will review the order evidence and email you with the decision.'; requestRefund('AQ-1048'); }
-    if (lowerQuestion.includes('support') || lowerQuestion.includes('agent')) answer = 'You can call 0545009046, email support@aqualink.gh, message WhatsApp at 0545009046, or open a ticket from the Human support card.';
-    if (language !== 'en') answer = `${translations[language].support} · ${answer}`;
-    setAiMessages((messages) => [...messages, { from: 'user', text: question }, { from: 'ai', text: answer }]);
-    setAiInput('');
-  }
-
-  function loginAdmin(event) {
-    event.preventDefault();
-    if (adminCredentials.username.trim() && adminCredentials.password.trim()) {
-      setAdminAuthenticated(true);
-      setNotice('Admin session verified. Access is logged for this demo workspace.');
-    } else setNotice('Enter both admin username and password.');
-  }
-
-  function downloadReport(kind) {
-    const report = { report: kind, generatedAt: new Date().toISOString(), region, demand: [{ area: 'East Legon', share: '31%', peak: '07:00–10:00', recommendation: 'Stage 6 trucks' }, { area: 'Osu', share: '24%', peak: '07:00–10:00', recommendation: 'Stage 4 trucks' }, { area: 'Low demand zones', share: '18%', peak: 'After 14:00', recommendation: 'Reduce idle capacity' }], paymentsPending: 'GH₵4,820', revenueAtRisk: 'GH₵1,240', interventions: 'Redeploy drivers, review escrow, contact dissatisfied buyers' };
-    const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `aqualink-${kind.toLowerCase().replaceAll(' ', '-')}-${region.toLowerCase()}.json`;
-    link.click();
-    URL.revokeObjectURL(link.href);
-    setNotice(`${kind} report downloaded for ${region}.`);
-  }
+  const { downloadReport } = useReports({ region, onNotice: showNotice });
 
   return (
     <div className="app-shell">
@@ -157,7 +53,7 @@ function App() {
         <div className="workspace-label">WORKSPACE</div>
         <div className="role-list">
           {roles.map(([key, label, description]) => (
-            <button className={`role-button ${role === key ? 'active' : ''}`} key={key} type="button" onClick={() => { setRole(key); setNotice(''); }}>
+            <button className={`role-button ${role === key ? 'active' : ''}`} key={key} type="button" onClick={() => selectRole(key)}>
               <span className={`role-icon ${key}`} aria-hidden="true">{key === 'buyer' ? '⌂' : key === 'seller' ? '↗' : key === 'institution' ? '▦' : '◈'}</span>
               <span><b>{label}</b><small>{description}</small></span>
             </button>
@@ -167,9 +63,9 @@ function App() {
       </aside>
 
       <main className="main-content" id="main">
-        <header className="topbar"><div className="breadcrumb"><span>AquaLink</span><i>/</i><strong>{t[role]}</strong><select aria-label="Operating region" value={region} onChange={(event) => { setRegion(event.target.value); showNotice(`Workspace switched to ${event.target.value}.`); }}><option>Accra</option><option>Kumasi</option><option>Takoradi</option><option>Tema</option><option>Lagos</option><option>Abidjan</option></select></div><div className="topbar-actions"><label className="language-picker"><span>文</span><select aria-label="Language" value={language} onChange={(event) => setLanguage(event.target.value)}>{languages.map(([key, label]) => <option value={key} key={key}>{label}</option>)}</select></label><button className={`ai-trigger ${aiOpen ? 'active' : ''}`} type="button" onClick={() => setAiOpen(!aiOpen)}><span>✦</span> Aqua AI</button><button className="icon-button" type="button" aria-label="Notifications" onClick={() => showNotice('You have 2 new delivery updates.')}><span>♧</span><em>2</em></button><button className="profile mobile-profile" type="button"><span className="avatar">AK</span></button></div></header>
-        {notice && <div className="notice" role="status"><span>✓</span>{notice}<button type="button" aria-label="Dismiss notification" onClick={() => setNotice('')}>×</button></div>}
-        {aiOpen && <AiPanel role={role} input={aiInput} setInput={setAiInput} messages={aiMessages} askAi={askAi} close={() => setAiOpen(false)} />}
+        <header className="topbar"><div className="breadcrumb"><span>AquaLink</span><i>/</i><strong>{t[role]}</strong><select aria-label="Operating region" value={region} onChange={(event) => { setRegion(event.target.value); showNotice(`Workspace switched to ${event.target.value}.`); }}><option>Accra</option><option>Kumasi</option><option>Takoradi</option><option>Tema</option><option>Lagos</option><option>Abidjan</option></select></div><div className="topbar-actions"><label className="language-picker"><span>文</span><select aria-label="Language" value={language} onChange={(event) => setLanguage(event.target.value)}>{languages.map(([key, label]) => <option value={key} key={key}>{label}</option>)}</select></label><button className={`ai-trigger ${aiOpen ? 'active' : ''}`} type="button" onClick={toggleAi}><span>✦</span> Aqua AI</button><button className="icon-button" type="button" aria-label="Notifications" onClick={() => showNotice('You have 2 new delivery updates.')}><span>♧</span><em>2</em></button><button className="profile mobile-profile" type="button"><span className="avatar">AK</span></button></div></header>
+        {notice && <div className="notice" role="status"><span>✓</span>{notice}<button type="button" aria-label="Dismiss notification" onClick={dismissNotice}>×</button></div>}
+        {aiOpen && <AiPanel role={role} input={aiInput} setInput={setAiInput} messages={aiMessages} askAi={askAi} close={closeAi} />}
         {role === 'buyer' && (buyerAuthenticated ? <><BuyerView booking={booking} updateBooking={updateBooking} requestDelivery={requestDelivery} orders={orders} showNotice={showNotice} authStep={authStep} email={email} setEmail={setEmail} sendOtp={sendOtp} verifyOtp={verifyOtp} confirmDelivery={confirmDelivery} requestRefund={requestRefund} savedAddresses={savedAddresses} repeatBooking={repeatBooking} setSavedAddresses={setSavedAddresses} t={t} driverUpdate={driverUpdate} refreshDriverUpdate={refreshDriverUpdate} /><BuyerFinance showNotice={showNotice} /></> : <BuyerAccessGate onVerified={() => setBuyerAuthenticated(true)} />)}
         {role === 'seller' && (sellerApproved ? <SellerView available={available} setAvailable={setAvailable} showNotice={showNotice} orders={orders} updateOrderStatus={updateOrderStatus} sellerProfile={sellerProfile} setSellerProfile={setSellerProfile} /> : <SellerAccessGate sellerProfile={sellerProfile} setSellerProfile={setSellerProfile} onApproved={() => setSellerApproved(true)} />)}
         {role === 'seller' && <SellerFinance showNotice={showNotice} />}
@@ -254,7 +150,7 @@ function OpsView({ downloadReport }) {
 }
 
 function AiPanel({ role, input, setInput, messages, askAi, close }) {
-  const quickActions = role === 'ops' ? ['Forecast demand', 'Optimize dispatch', 'Find service risks', 'Review refund queue'] : ['Explain my order', 'Check delivery price', 'Find my receipt', 'Track driver ETA', 'Request a refund'];
+  const quickActions = aiQuickActions(role);
   return <section className="ai-panel" aria-label="Aqua AI assistant"><div className="ai-panel-head"><div><span className="ai-label">✦ AQUA AI</span><strong>{role === 'ops' ? 'Operations copilot' : 'Your water-delivery copilot'}</strong></div><button type="button" aria-label="Close Aqua AI" onClick={close}>×</button></div><div className="ai-messages">{messages.slice(-4).map((message, index) => <p className={message.from} key={`${message.from}-${index}`}>{message.text}</p>)}</div><div className="ai-quick-actions">{quickActions.map((action) => <button type="button" key={action} onClick={() => setInput(action)}>{action}</button>)}</div><form className="ai-form" onSubmit={askAi}><input aria-label="Ask Aqua AI" value={input} onChange={(event) => setInput(event.target.value)} placeholder="Ask about orders, pricing, or demand..." /><button type="submit">Ask <span>→</span></button></form><small className="ai-disclaimer">AI suggestions are decision support. Confirm payment, quality, and dispatch actions in the workspace.</small></section>;
 }
 

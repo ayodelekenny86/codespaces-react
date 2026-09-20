@@ -1,3 +1,6 @@
+/**
+ * @param {{ cartCount: number }} props
+ */
 function Header({ cartCount }) {
   return (
     <header className="site-header">
