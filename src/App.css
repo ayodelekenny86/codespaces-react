@@ -59,3 +59,70 @@ button { cursor: pointer; }
 @media (max-width: 600px) { .access-gate { margin: 40px auto; padding: 25px; }.report-actions { align-items: stretch; flex-direction: column; }.report-actions button { width: 100%; } }
 .seller-gate { border-color: #e1d6c1; }.pending-approval { display: grid; gap: 10px; max-width: 380px; margin-top: 20px; padding: 15px; background: #fff8eb; border: 1px solid #f0dfb9; border-radius: 4px; }.pending-approval strong { font-size: 12px; }.pending-approval small { color: var(--muted); font-size: 9px; line-height: 1.5; }.pending-approval button { width: 100%; }.access-gate form select { padding: 12px; border: 1px solid #cddbd8; border-radius: 4px; font-size: 11px; }
 .live-agent-card { display: grid; gap: 8px; margin-top: 20px; padding: 17px; background: linear-gradient(135deg, #f2ecfa, #fff); border-color: #dacbe6; }.live-agent-head { display: flex; justify-content: space-between; }.agent-online { color: #287660; font-size: 8px; }.live-agent-card > strong { color: #4e3c60; font-size: 12px; }.live-agent-card p { margin: 0; color: #786b80; font-size: 9px; line-height: 1.55; }.live-agent-actions { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 4px; }.live-agent-actions button { padding: 7px 9px; color: #704b8d; background: #fff; border: 1px solid #d7c5e5; border-radius: 3px; font-size: 9px; font-weight: 700; }.institution-agent { max-width: 100%; margin-top: 20px; }
+
+/* Marketplace components */
+.site-header { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 16px 20px; background: #fff; border-bottom: 1px solid var(--line); }
+.site-header h1 { margin: 0; font-size: 16px; letter-spacing: -.04em; }
+.site-header span { color: var(--muted); font-size: 10px; white-space: nowrap; }
+.marketplace { padding: 24px 20px; }
+.marketplace h2 { margin: 0 0 16px; font-size: 18px; letter-spacing: -.04em; }
+.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 18px; }
+.product-card { display: grid; gap: 9px; padding: 20px; background: var(--card); border: 1px solid var(--line); border-radius: 5px; }
+.product-card h3 { margin: 0; font-size: 14px; letter-spacing: -.03em; }
+.product-card p { margin: 0; color: var(--ink); font-family: Georgia, serif; font-size: 21px; }
+.product-card button { margin-top: 6px; padding: 12px 14px; color: #fff; background: var(--teal); border: 1px solid var(--teal); border-radius: 4px; font-size: 11px; font-weight: 700; }
+.product-card button:hover { background: #066a65; }
+.cart { margin: 24px 20px; padding: 20px; background: var(--card); border: 1px solid var(--line); border-radius: 5px; }
+.cart h2 { margin: 0 0 12px; font-size: 16px; }
+.cart ul { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }
+.cart li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-top: 1px solid #edf1ef; font-size: 11px; }
+.cart li button { padding: 8px 11px; color: #a55752; background: #f8e5e1; border: 1px solid #eccdca; border-radius: 3px; font-size: 10px; font-weight: 700; }
+.cart p { margin: 0; color: var(--muted); font-size: 11px; }
+
+/* Mobile hardening */
+.app-logo { margin-bottom: 46px; }
+.role-button, .sidebar-link, .role-button > span { min-width: 0; }
+.role-button > span:last-child { overflow: hidden; }
+.role-button b, .role-button small { overflow: hidden; text-overflow: ellipsis; }
+.breadcrumb { min-width: 0; }
+.breadcrumb select { max-width: 96px; }
+.orders-table { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.ai-messages { overflow-wrap: anywhere; }
+.topbar-actions { flex-wrap: nowrap; }
+
+@media (max-width: 650px) {
+  .role-button > span:last-child { display: none; }
+  .role-list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .topbar-actions { gap: 7px; }
+  .icon-button { padding: 4px; font-size: 17px; }
+  .language-picker select { width: auto; max-width: 92px; }
+  .main-content { padding-bottom: 60px; }
+  .page-header > :last-child { display: flex; }
+  .page-header > :last-child > button { width: 100%; }
+  .saved-address-list { width: 100%; }
+  .saved-address-list button { flex: 1 1 auto; }
+  .support-actions a, .support-actions button { padding: 12px 10px; }
+  .confirm-button { padding: 7px 9px; }
+  .cart { margin: 18px 0; }
+  .marketplace { padding: 18px 0; }
+}
+
+@media (max-width: 420px) {
+  .sidebar { padding: 14px 10px; }
+  .app-logo { margin-bottom: 16px; }
+  .role-list { display: flex; gap: 4px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 2px; }
+  .role-button { flex: 1 0 auto; min-width: 44px; }
+  .role-icon { width: 26px; height: 26px; font-size: 14px; }
+  .page-header h1 { font-size: 26px; }
+  .ai-trigger { display: none; }
+  .quote { align-items: flex-start; flex-direction: column; gap: 10px; }
+  .quote-note { text-align: left; }
+}
+
+@media (hover: none) {
+  .role-button:hover { background: transparent; }
+  .role-button.active:hover { background: #274c5b; }
+  .outline-button:hover { background: transparent; }
+  .primary-button:hover { background: var(--teal); }
+  .product-card button:hover { background: var(--teal); }
+}
