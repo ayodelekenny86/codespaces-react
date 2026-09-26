@@ -64,7 +64,7 @@ button { cursor: pointer; }
   .access-gate input, .access-gate form select { width: 100%; min-width: 0; }
   .report-actions { align-items: stretch; flex-direction: column; }
   .report-actions button { width: 100%; }
-} }
+}
 .seller-gate { border-color: #e1d6c1; }.pending-approval { display: grid; gap: 10px; max-width: 380px; margin-top: 20px; padding: 15px; background: #fff8eb; border: 1px solid #f0dfb9; border-radius: 4px; }.pending-approval strong { font-size: 12px; }.pending-approval small { color: var(--muted); font-size: 9px; line-height: 1.5; }.pending-approval button { width: 100%; }.access-gate form select { padding: 12px; border: 1px solid #cddbd8; border-radius: 4px; font-size: 11px; }
 .live-agent-card { display: grid; gap: 8px; margin-top: 20px; padding: 17px; background: linear-gradient(135deg, #f2ecfa, #fff); border-color: #dacbe6; }.live-agent-head { display: flex; justify-content: space-between; }.agent-online { color: #287660; font-size: 8px; }.live-agent-card > strong { color: #4e3c60; font-size: 12px; }.live-agent-card p { margin: 0; color: #786b80; font-size: 9px; line-height: 1.55; }.live-agent-actions { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 4px; }.live-agent-actions button { padding: 7px 9px; color: #704b8d; background: #fff; border: 1px solid #d7c5e5; border-radius: 3px; font-size: 9px; font-weight: 700; }.institution-agent { max-width: 100%; margin-top: 20px; }
 
